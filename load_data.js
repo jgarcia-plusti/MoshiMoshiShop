@@ -1,3 +1,26 @@
+// Notificación simple al agregar
+function mostrarNotificacionCarrito(nombre) {
+  let notif = document.createElement('div');
+  notif.className = 'notificacion-carrito-barra';
+  notif.style.position = 'fixed';
+  notif.style.bottom = '0';
+  notif.style.left = '0';
+  notif.style.width = '100%';
+  notif.style.height = '55px';
+  notif.style.background = 'linear-gradient(90deg, #ffb6c1 0%, #ffe4e1 100%)';
+  notif.style.color = '#333';
+  notif.style.display = 'flex';
+  notif.style.alignItems = 'center';
+  notif.style.justifyContent = 'center';
+  notif.style.fontSize = '1.2rem';
+  notif.style.fontWeight = 'bold';
+  notif.style.boxShadow = '0 -2px 8px rgba(0,0,0,0.08)';
+  notif.style.zIndex = '9999';
+  notif.style.borderTop = '2px solid #ff69b4';
+  notif.innerHTML = `<span style="margin-right:8px;">🛒</span>¡<span style="color:#d63384;">${nombre} </span> agregado al carrito!`;
+  document.body.appendChild(notif);
+  setTimeout(() => notif.remove(), 1800);
+}
 // Renderizar el carrito en el modal lateral
 function renderizarCarrito() {
   const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
@@ -147,6 +170,14 @@ function agregarAlCarrito(producto) {
   }
   localStorage.setItem('carrito', JSON.stringify(carrito));
   actualizarContadorCarrito();
+  // Mostrar notificación al agregar
+  if (producto.titulo) {
+    mostrarNotificacionCarrito(producto.titulo);
+  } else if (producto.nombre) {
+    mostrarNotificacionCarrito(producto.nombre);
+  } else {
+    mostrarNotificacionCarrito('Producto');
+  }
 }
 //
 function goInit() {
@@ -200,7 +231,6 @@ function cargarVariedadProductos() {
         e.preventDefault();
         const producto = JSON.parse(this.getAttribute('data-producto'));
         agregarAlCarrito(producto);
-        mostrarNotificacionCarrito(producto.titulo);
       });
     });
   });
@@ -278,28 +308,7 @@ function cargarProductos(categoria) {
           });
         });
         // Función para agregar productos al carrito
-        function agregarAlCarrito(producto) {
-          let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-          // Buscar por id único
-          const index = carrito.findIndex(p => p.id === producto.id);
-          if (index > -1) {
-            carrito[index].cantidad = (carrito[index].cantidad || 1) + 1;
-          } else {
-            producto.cantidad = 1;
-            carrito.push(producto);
-          }
-          localStorage.setItem('carrito', JSON.stringify(carrito));
-        }
-
-        // Notificación simple al agregar
-        function mostrarNotificacionCarrito(nombre) {
-          let notif = document.createElement('div');
-          notif.className = 'alert alert-success fixed-top text-center';
-          notif.style.zIndex = '9999';
-          notif.innerText = `¡${nombre} agregado al carrito!`;
-          document.body.appendChild(notif);
-          setTimeout(() => notif.remove(), 1500);
-        }
+        // ...existing code...
       }
       // Inicialmente mostrar todos
       renderCards(productos);
